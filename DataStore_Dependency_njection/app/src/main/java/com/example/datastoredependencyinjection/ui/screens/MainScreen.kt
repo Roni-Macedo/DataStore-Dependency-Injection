@@ -22,10 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.datastoredependencyinjection.datastore.DataStoreRepository
+import com.example.datastoredependencyinjection.datastore.DataStoreManager
 import com.example.datastoredependencyinjection.ui.theme.PurpleGrey40
 import com.example.datastoredependencyinjection.ui.theme.PurpleGrey80
 import kotlinx.coroutines.launch
@@ -33,17 +32,18 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
+    val context = LocalContext.current
+    val dataStoreManager = remember { DataStoreManager(context) }
+
     var text by remember { mutableStateOf("") }
     var result by remember { mutableStateOf("") }
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        DataStoreRepository.getTexts(context).collect {
+        dataStoreManager.getText().collect {
             result = it
         }
     }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -74,7 +74,7 @@ fun MainScreen() {
                 onClick = {
                     scope.launch {
                         if (text.isNotBlank()) {
-                            DataStoreRepository.saveTexts(context, text)
+                            dataStoreManager.saveText(text)
                         }
                         text = ""
                     }
@@ -86,10 +86,4 @@ fun MainScreen() {
             }
         }
     }
-}
-
-@Preview(device = "id:Nexus 4", showSystemUi = true, showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    MainScreen()
 }
