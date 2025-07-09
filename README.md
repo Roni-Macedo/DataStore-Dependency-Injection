@@ -24,27 +24,27 @@ Arquivo localizado em: `gradle/libs.versions.toml`
 
 ```toml
 [versions]
-hilt = "2.51"
-ksp = "2.0.21-1.0.27" # versão compatível com seu Kotlin
 kotlin = "2.0.21"
+dagger-hilt = "2.56.2"
+ksp = "2.0.21-1.0.27" # versão compatível com seu Kotlin
 datastorePreferences = "1.1.7"
 
 [libraries]
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-hilt-ksp-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+dagger-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt"}
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger-hilt" }
 
 [plugins]
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt"}
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 ```
 
 ## ⚙️ Configuração do build.gradle.kts do módulo :project
 
 ```
 plugins {
-    alias(libs.plugins.hilt.android.gradle.plugin) apply false
     alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.dagger.hilt) apply false
 }
 ```
 
@@ -52,15 +52,14 @@ plugins {
 
 ```
 plugins {
-    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.dagger.hilt)
 }
 
 dependencies {
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.ksp.compiler)
-    // Para o DataStore
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.dagger.hilt)
+    ksp(libs.hilt.compiler)
 
     // Outras dependências: Compose, Room etc.
 }
